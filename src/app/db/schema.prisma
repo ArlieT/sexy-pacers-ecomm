@@ -1,0 +1,152 @@
+// prisma/schema.prisma
+
+datasource db {
+    provider = "postgresql" // Change this to match your database provider
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model User {
+    id        Int               @id @default(autoincrement())
+    firstName String
+    lastName  String
+    email     String
+    mobile    String
+    createdAt DateTime          @default(now())
+    updatedAt DateTime          @updatedAt
+    addresses UserAddress[]
+    payments  UserPayment[]
+    sessions  ShoppingSession[]
+    orders    OrderDetail[]
+}
+
+model UserAddress {
+    id               Int     @id @default(autoincrement())
+    userId           Int
+    primaryAddress   String
+    secondaryAddress String?
+    country          String
+    city             String
+    postalCode       String
+    mobile           String
+    user             User    @relation(fields: [userId], references: [id])
+}
+
+model UserPayment {
+    id          Int      @id @default(autoincrement())
+    userId      Int
+    paymentType String
+    provider    String
+    accountNo   Int
+    expiry      DateTime
+    user        User     @relation(fields: [userId], references: [id])
+}
+
+model AdminUser {
+    id        Int       @id @default(autoincrement())
+    firstName String
+    lastName  String
+    email     String
+    typeId    Int
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    adminType AdminType @relation(fields: [typeId], references: [id])
+}
+
+model AdminType {
+    id          Int         @id @default(autoincrement())
+    adminType   String
+    permissions String
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+    adminUsers  AdminUser[]
+}
+
+model Product {
+    id          Int              @id @default(autoincrement())
+    name        String
+    description String
+    price       Float
+    SKU         String
+    categoryId  Int
+    inventoryId Int
+    discountId  Int
+    createdAt   DateTime         @default(now())
+    updatedAt   DateTime         @updatedAt
+    category    ProductCategory  @relation(fields: [categoryId], references: [id])
+    inventory   ProductInventory @relation(fields: [inventoryId], references: [id])
+    discount    Discount         @relation(fields: [discountId], references: [id])
+}
+
+model ProductCategory {
+    id          Int       @id @default(autoincrement())
+    name        String
+    description String
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    products    Product[]
+}
+
+model ProductInventory {
+    id        Int       @id @default(autoincrement())
+    quantity  Int
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    products  Product[]
+}
+
+model Discount {
+    id              Int       @id @default(autoincrement())
+    name            String
+    discountPercent Float
+    active          Boolean
+    createdAt       DateTime  @default(now())
+    updatedAt       DateTime  @updatedAt
+    deletedAt       DateTime?
+    products        Product[]
+}
+
+model Cart {
+    id              Int               @id @default(autoincrement())
+    sessionId       Int
+    productId       Int
+    quantity        Float
+    createdAt       DateTime          @default(now())
+    updatedAt       DateTime          @updatedAt
+    ShoppingSession ShoppingSession[]
+}
+
+model ShoppingSession {
+    id        Int      @id @default(autoincrement())
+    userId    Int
+    total     Float
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    user      User     @relation(fields: [userId], references: [id])
+    cart      Cart?    @relation(fields: [cartId], references: [id])
+    cartId    Int?
+}
+
+model OrderItem {
+    id          Int         @id @default(autoincrement())
+    orderId     Int
+    productId   Int
+    quantity    Int
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+    orderDetail OrderDetail @relation(fields: [orderId], references: [id])
+}
+
+model OrderDetail {
+    id         Int         @id @default(autoincrement())
+    orderId    Int
+    productId  Int
+    quantity   Int
+    createdAt  DateTime    @default(now())
+    updatedAt  DateTime    @updatedAt
+    orderItems OrderItem[]
+    user       User        @relation(fields: [orderId], references: [id])
+}
