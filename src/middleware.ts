@@ -8,10 +8,9 @@ export async function middleware(req: NextRequest) {
   const isAuthenticated = await checkUserAuthentication(req);
   console.log({ isAuthenticated });
 
-  if (!isAuthenticated && pathname !== "/login") {
-    // If the user is not authenticated and the current path is not the login page,
-    // redirect them to the login page
-    return NextResponse.redirect(`${origin}/login`);
+  if (!isAuthenticated && pathname !== "/signin-signup") {
+    // redirect them to the login page if user is not authenticated
+    return NextResponse.redirect(`${origin}/signin-signup`);
   }
 
   return NextResponse.next();

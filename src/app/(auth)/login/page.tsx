@@ -1,3 +1,4 @@
+import SignInButton from "@/components/auth/google-signin-button";
 import { login } from "@/db/queries/auth";
 import { loginSchema } from "@/lib/zod-schema/auth";
 import { redirect } from "next/navigation";
@@ -30,6 +31,7 @@ const Login = () => {
       <input type="email" name="email" placeholder="Email" required />
       <input type="password" name="password" placeholder="Password" required />
       <button type="submit">Login</button>
+      <SignInButton />
     </form>
   );
 };

@@ -1,30 +1,62 @@
 datasource db {
-    provider  = "postgresql"
-    url       = env("DATABASE_URL") // uses connection pooling
+    provider = "postgresql"
+    url      = env("DATABASE_URL") // uses connection pooling
 }
 
 generator client {
     provider = "prisma-client-js"
 }
 
+enum Gender {
+    Male
+    Female
+    Kids
+}
+
+// push notifications
+enum NotificationType {
+    Promos
+    Offers
+    Latest
+    Articles
+    Events
+}
+
 model User {
-    id        Int               @id @default(autoincrement())
-    firstName String
-    lastName  String
-    email     String            @unique
-    password  String
-    mobile    String
-    createdAt DateTime          @default(now())
-    updatedAt DateTime          @updatedAt
-    addresses UserAddress[]
-    payments  UserPayment[]
-    sessions  ShoppingSession[]
-    orders    OrderDetail[]
+    id          String            @id
+    firstName   String?
+    lastName    String?
+    email       String?           @unique
+    password    String?
+    mobile      String?
+    location    String?
+    bio         String?
+    addresses   UserAddress[]
+    payments    UserPayment[]
+    sessions    ShoppingSession[]
+    orders      OrderDetail[]
+    preferences UserPreferences[]
+    createdAt   DateTime          @default(now())
+    updatedAt   DateTime          @updatedAt
+}
+
+model UserPreferences {
+    id            Int                @id @default(autoincrement())
+    userId        String
+    theme         String
+    language      String
+    gender        Gender[]
+    sports        String[]
+    brands        String[]
+    sizes         String[]
+    notifications NotificationType[]
+    location      Boolean
+    user          User               @relation(fields: [userId], references: [id])
 }
 
 model UserAddress {
     id               Int     @id @default(autoincrement())
-    userId           Int
+    userId           String
     primaryAddress   String
     secondaryAddress String?
     country          String
@@ -36,7 +68,7 @@ model UserAddress {
 
 model UserPayment {
     id          Int      @id @default(autoincrement())
-    userId      Int
+    userId      String
     paymentType String
     provider    String
     accountNo   Int
@@ -120,7 +152,7 @@ model Cart {
 
 model ShoppingSession {
     id        Int      @id @default(autoincrement())
-    userId    Int
+    userId    String
     total     Float
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -141,11 +173,11 @@ model OrderItem {
 
 model OrderDetail {
     id         Int         @id @default(autoincrement())
-    orderId    Int
+    userId     String
     productId  Int
     quantity   Int
     createdAt  DateTime    @default(now())
     updatedAt  DateTime    @updatedAt
     orderItems OrderItem[]
-    user       User        @relation(fields: [orderId], references: [id])
+    user       User        @relation(fields: [userId], references: [id])
 }

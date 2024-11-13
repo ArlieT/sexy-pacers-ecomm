@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 import { cookies } from "next/headers";
 import { encrypt } from "@/lib/session";
 
+// login with email and password
 export const login = async ({ email, password }: TLogin) => {
   const validUser = loginSchema.safeParse({ email, password });
 
