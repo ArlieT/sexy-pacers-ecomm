@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { error } from "console";
 
 type SignUpProps = {
   handleSignUp: (d: TUser) => Promise<void>;
@@ -16,7 +17,6 @@ const SignUpForm = () => {
   const {
     register,
     handleSubmit,
-
     setError,
     formState: { errors },
   } = useForm<TUser>({
@@ -37,14 +37,20 @@ const SignUpForm = () => {
       const response = await signUp(data);
 
       if (response.success === "true") {
-        router.replace("/login");
+        setError("root", {
+          type: "custom",
+          message: response.message,
+        });
+        localStorage.setItem("user", JSON.stringify(response.email));
+        // router.replace("/login");
       } else if (response.type === "email_exists") {
         setError("email", { message: "Email already exists" });
       } else {
         setError("mobile", { message: "Unexpected error" });
       }
     } catch (error) {
-      setError("mobile", { message: "Unexpected error" });
+      console.log(error);
+      setError("root", { type: "custom", message: "Unexpected error" });
     } finally {
       setLoading(false);
     }
@@ -53,7 +59,7 @@ const SignUpForm = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col mx-auto border p-2 w-fit rounded-sm gap-y-2"
+      className="mx-auto flex w-fit flex-col gap-y-2 rounded-sm border p-2"
     >
       <div>
         <label htmlFor="firstName">First Name</label>
@@ -84,6 +90,9 @@ const SignUpForm = () => {
         <label htmlFor="mobile">Mobile</label>
         <input type="text" id="mobile" {...register("mobile")} />
         {errors.mobile && <p>{errors.mobile.message}</p>}
+      </div>
+      <div>
+        {errors.root?.type === "custom" && <p>{errors.root.message}</p>}
       </div>
       <button type="submit" disabled={loading}>
         {loading ? "Loading..." : "Register"}

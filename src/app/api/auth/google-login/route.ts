@@ -1,53 +1,44 @@
 import { prisma } from "@/db/prisma";
 import { encrypt } from "@/lib/session";
-import { OAuth2Client } from "google-auth-library";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+export async function POST(request: Request) {
+  const tokenInfo = await request.json();
 
-export async function POST(request: Request, response: Response) {
-  const { idToken } = await request.json();
+  try {
+    const { email } = tokenInfo;
 
-  console.log({ idToken });
+    if (!email) {
+      return NextResponse.json(
+        { message: "Email not found in token info." },
+        { status: 400 },
+      );
+    }
 
-  //verify user id
-  const ticket = await client.verifyIdToken({
-    idToken,
-    audience: process.env.GOOGLE_CLIENT_ID,
-  });
-
-  const payload = ticket.getPayload();
-  const userId = payload?.sub;
-  if (!payload) {
-    return new Response("sign in failed", {
-      status: 401,
-    });
-  }
-
-  let user = await prisma.user.findUnique({ where: { id: userId } });
-
-  const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30); // 30 days
-  const session = await encrypt({ user, expires });
-
-  (await cookies()).set("session", session, { expires, httpOnly: true });
-
-  if (!user) {
-    // Create a new user if they don't exist, only setting the ID as required
-    user = await prisma.user.create({
-      data: {
-        id: userId!,
-        firstName: payload.given_name!, // Optional
-        lastName: payload.family_name!, // Optional
-        email: payload.email || null, // Optional
+    const user = prisma.user.findFirst({
+      where: {
+        email,
       },
     });
+    if (!user) {
+      return NextResponse.json({ message: "User not found." }, { status: 400 });
+    }
 
-    return new Response("sign in success", {
-      status: 200,
-    });
-  } else {
-    return new Response("sign in success", {
-      status: 200,
-    });
+    const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30); // 30 days
+    const session = await encrypt({ user, expires });
+
+    (await cookies()).set("session", session, { expires, httpOnly: true });
+
+    return NextResponse.json(
+      { message: "Authenticated successfully" },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error processing token info:", error);
+    return NextResponse.json(
+      { message: "Authentication failed" },
+      { status: 400 },
+    );
   }
 }

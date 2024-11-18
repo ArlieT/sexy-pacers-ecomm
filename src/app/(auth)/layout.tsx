@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Poppins } from "next/font/google";
 import "../../app/globals.css";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const geistSans = localFont({
   src: "../../app/fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
+
+const poppins = Poppins({
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  subsets: ["latin"],
+  variable: "--font-poppins",
+});
+
 const geistMono = localFont({
   src: "../../app/fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
@@ -23,13 +32,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${geistSans.className} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  );
+  return <main className="h-full">{children}</main>;
 }

@@ -31,6 +31,9 @@ model User {
     mobile      String?
     location    String?
     bio         String?
+    isVerified  Boolean           @default(false)
+    verificationToken String?
+    tokenExpiry DateTime?
     addresses   UserAddress[]
     payments    UserPayment[]
     sessions    ShoppingSession[]
