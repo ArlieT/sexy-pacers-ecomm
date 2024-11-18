@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-
 export async function middleware(req: NextRequest) {
   const { pathname, origin } = req.nextUrl;
   console.log("test");
 
   // Check if the user is authenticated
   const isAuthenticated = await checkUserAuthentication(req);
-  console.log({ isAuthenticated });
+console.log({ isAuthenticated });
 
-  if (!isAuthenticated && pathname !== "/signin-signup") {
+    const exludedPaths = ["/login", "/signin-signup"];
+
+  if (!isAuthenticated && !exludedPaths.includes(pathname)) {
     // redirect them to the login page if user is not authenticated
     return NextResponse.redirect(`${origin}/signin-signup`);
   }
