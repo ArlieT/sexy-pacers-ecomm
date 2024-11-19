@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev --turbopack",
+        "dev": "next dev",
         "build": "next build",
         "start": "next start",
         "lint": "next lint"
@@ -12,6 +12,15 @@
         "schema": "src/db/schema.prisma"
     },
     "dependencies": {
+        "@apollo/client": "^3.11.10",
+        "@apollo/experimental-nextjs-app-support": "^0.11.6",
+        "@apollo/server": "^4.9.0",
+        "@as-integrations/next": "^2.0.0",
+        "@graphql-codegen/cli": "^5.0.3",
+        "@graphql-codegen/fragment-matcher": "^5.0.2",
+        "@graphql-codegen/typescript": "^4.1.1",
+        "@graphql-codegen/typescript-operations": "^4.3.1",
+        "@graphql-codegen/typescript-react-apollo": "^4.3.2",
         "@hookform/resolvers": "^3.9.1",
         "@prisma/client": "^5.22.0",
         "@react-oauth/google": "^0.12.1",
@@ -19,6 +28,8 @@
         "bcrypt": "^5.1.1",
         "class-variance-authority": "^0.7.0",
         "google-auth-library": "^9.14.2",
+        "graphql": "^16.8.0",
+        "graphql-tag": "^2.12.6",
         "jose": "^5.9.6",
         "jsonwebtoken": "^9.0.2",
         "next": "15.0.3",
@@ -31,6 +42,7 @@
     },
     "devDependencies": {
         "@types/bcrypt": "^5.0.2",
+        "@types/cors": "^2.8.17",
         "@types/jsonwebtoken": "^9.0.7",
         "@types/node": "^20",
         "@types/nodemailer": "^6.4.16",
