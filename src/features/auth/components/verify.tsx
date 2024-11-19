@@ -1,5 +1,5 @@
 "use client";
-import { verifyEmail } from "@/db/queries/auth";
+import { verifyEmail } from "@/features/auth/queries";
 import React, { useEffect } from "react";
 
 const Verify = ({ token }: { token: string }) => {

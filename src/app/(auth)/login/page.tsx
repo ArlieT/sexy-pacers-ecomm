@@ -5,7 +5,8 @@ import Image from "next/image";
 import Button from "@/components/ui/button";
 import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
-import { fetchGoogleUser } from "@/db/queries/auth";
+import { fetchGoogleUser, googleLogin } from "@/features/auth/queries";
+import { error } from "console";
 
 const Login = () => {
   const router = useRouter();
@@ -15,22 +16,20 @@ const Login = () => {
   const login = useGoogleLogin({
     onSuccess: async (response) => {
       setIsLoading(false);
-      //   router.push("/")
-      const userInfo = await fetchGoogleUser(response.access_token);
-      if (userInfo.success === "false") {
+
+      const googleResponse = await fetchGoogleUser(response.access_token);
+      if (googleResponse.success === "false") {
         setIsLoading(false);
-        setError(userInfo.error);
+        setError(googleResponse.error);
         return;
       }
-      console.log("Google Login Success:", response);
-      const res = await fetch("/api/auth/google-login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: userInfo.email }),
+
+      const response_ = await googleLogin({
+        userInfo: googleResponse.userInfo,
       });
-      if (res.ok) {
+
+      console.log({ response_ });
+      if (response_.success) {
         router.push("/");
       }
     },

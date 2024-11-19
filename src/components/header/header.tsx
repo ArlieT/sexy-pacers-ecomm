@@ -1,5 +1,5 @@
 import React from "react";
-import Logout from "../../features/auth/logout";
+import Logout from "../../features/auth/components/logout";
 
 const Header = () => {
   return (

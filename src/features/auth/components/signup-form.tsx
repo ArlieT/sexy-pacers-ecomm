@@ -1,5 +1,5 @@
 "use client";
-import { signUp } from "@/db/queries/auth";
+import { signUp } from "@/features/auth/queries";
 import { TUser, userSchema } from "@/lib/zod-schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";

@@ -1,4 +1,4 @@
-import Verify from "@/features/auth/verify";
+import Verify from "@/features/auth/components/verify";
 import React from "react";
 
 const page = ({ searchParams }: { searchParams: { token: string } }) => {

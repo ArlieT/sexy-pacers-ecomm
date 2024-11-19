@@ -5,9 +5,8 @@ export async function middleware(req: NextRequest) {
 
   // Check if the user is authenticated
   const isAuthenticated = await checkUserAuthentication(req);
-console.log({ isAuthenticated });
 
-    const exludedPaths = ["/login", "/signin-signup"];
+  const exludedPaths = ["/login", "/signin-signup"];
 
   if (!isAuthenticated && !exludedPaths.includes(pathname)) {
     // redirect them to the login page if user is not authenticated
@@ -18,7 +17,7 @@ console.log({ isAuthenticated });
 }
 
 export async function checkUserAuthentication(
-  req: NextRequest
+  req: NextRequest,
 ): Promise<boolean> {
   const token = req.cookies.get("session");
   return token !== undefined;
