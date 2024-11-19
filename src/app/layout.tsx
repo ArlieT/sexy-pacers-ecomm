@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { ApolloWrapper } from "@/components/Provider/apollo-wrapper";
+import Providers from "@/components/Provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,7 +32,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${geistSans.className} antialiased`}
         >
-          {children}
+          <Providers>{children}</Providers>
         </body>
       </html>
     </GoogleOAuthProvider>
